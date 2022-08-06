@@ -40,10 +40,20 @@ const getAllKeys = async () => {
   }
   return result.map(({ key }) => key);
 };
+
+const deleteKeys = ({ key }) => {
+  if (!key) {
+    console.log('Deleting all keys');
+    return Cache.deleteMany().exec();
+  }
+  console.log(`Deleting key: ${key}`);
+  return Cache.deleteOne({ key }).exec();
+};
 module.exports = {
   findCacheByKey,
   addCache,
   updateCache,
   cacheHits,
   getAllKeys,
+  deleteKeys,
 };

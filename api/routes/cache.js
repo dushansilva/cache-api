@@ -3,7 +3,7 @@ const {
   uniqueNamesGenerator, adjectives, colors, animals,
 } = require('unique-names-generator');
 const {
-  addCache, findCacheByKey, updateCache, cacheHits, getAllKeys,
+  addCache, findCacheByKey, updateCache, cacheHits, getAllKeys, deleteKeys,
 } = require('../controller/cache-controller');
 
 const router = express.Router();
@@ -63,8 +63,41 @@ router.get('/keys', async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      error: error.message ? error.message : 'error while getting all cache key',
+      error: error.message ? error.message : 'error while getting all cache keys',
     });
   }
 });
+
+router.delete('/', async (req, res) => {
+  const { key } = req.query;
+  try {
+    if (!key) {
+      throw new Error('Cache key cannot be empty');
+    }
+    const result = await deleteKeys({ key });
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message ? error.message : 'error while deleting all cache keys',
+    });
+  }
+});
+
+router.delete('/keys', async (req, res) => {
+  try {
+    const result = await deleteKeys({});
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message ? error.message : 'error while deleting cache key',
+    });
+  }
+});
+
 module.exports = router;
