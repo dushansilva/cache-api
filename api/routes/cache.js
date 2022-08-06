@@ -1,6 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const Cache = require('../models/cache');
+const {
+  uniqueNamesGenerator, adjectives, colors, animals,
+} = require('unique-names-generator');
+const { addCache, findCacheByKey, updateCache } = require('../controller/cache-controller');
 
 const router = express.Router();
 
@@ -10,20 +12,23 @@ router.post('/', async (req, res) => {
     if (!key) {
       throw new Error('Cache key cannot be empty');
     }
-    const cache = new Cache({
-      _id: new mongoose.Types.ObjectId(),
-      key,
-      value: 'test',
-    });
-    const result = await cache.save();
-    console.log(result);
-    res.status(200).json({
+    const existingCache = await findCacheByKey({ key });
+    const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] });
+    if (existingCache && existingCache.length >= 1) {
+      const result = await updateCache({ key, value: randomName });
+      return res.status(200).json({
+        message: 'Cache updated successfully',
+        data: result,
+      });
+    }
+    const result = await addCache({ key, value: randomName });
+    return res.status(200).json({
       message: 'Cache added successfully',
       data: result,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message ? error.message : 'error while adding cache',
     });
   }
