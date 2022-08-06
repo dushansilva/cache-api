@@ -79,6 +79,17 @@ const deleteKeys = ({ key }) => {
   return Cache.deleteOne({ key }).exec();
 };
 
+const createCache = async ({ key }) => {
+  const existingCache = await findCacheByKey({ key });
+  const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] });
+  if (existingCache) {
+    console.log('Updating cache');
+    return updateCache({ key, changes: { value: randomName, lastHit: new Date() } });
+  }
+  console.log('adding new cache');
+  return addCache({ key, value: randomName });
+};
+
 module.exports = {
   findCacheByKey,
   addCache,
@@ -86,4 +97,5 @@ module.exports = {
   cacheHits,
   getAllKeys,
   deleteKeys,
+  createCache,
 };

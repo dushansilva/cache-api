@@ -1,9 +1,6 @@
 const express = require('express');
 const {
-  uniqueNamesGenerator, adjectives, colors, animals,
-} = require('unique-names-generator');
-const {
-  addCache, findCacheByKey, updateCache, cacheHits, getAllKeys, deleteKeys,
+  cacheHits, getAllKeys, deleteKeys, createCache,
 } = require('../controller/cache-controller');
 
 const router = express.Router();
@@ -14,19 +11,8 @@ router.post('/', async (req, res) => {
     if (!key) {
       throw new Error('Cache key cannot be empty');
     }
-    const existingCache = await findCacheByKey({ key });
-    const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] });
-    if (existingCache) {
-      const result = await updateCache({ key, changes: { value: randomName } });
-      console.log(result);
-      return res.status(200).json({
-        message: 'Cache updated successfully',
-        data: result,
-      });
-    }
-    const result = await addCache({ key, value: randomName });
+    const result = await createCache({ key });
     return res.status(200).json({
-      message: 'Cache added successfully',
       data: result,
     });
   } catch (error) {
