@@ -2,7 +2,9 @@ const express = require('express');
 const {
   uniqueNamesGenerator, adjectives, colors, animals,
 } = require('unique-names-generator');
-const { addCache, findCacheByKey, updateCache } = require('../controller/cache-controller');
+const {
+  addCache, findCacheByKey, updateCache, cacheHits,
+} = require('../controller/cache-controller');
 
 const router = express.Router();
 
@@ -30,6 +32,24 @@ router.post('/', async (req, res) => {
     console.log(error);
     return res.status(500).json({
       error: error.message ? error.message : 'error while adding cache',
+    });
+  }
+});
+
+router.get('/', async (req, res) => {
+  const { key } = req.query;
+  try {
+    if (!key) {
+      throw new Error('Cache key cannot be empty');
+    }
+    const result = await cacheHits({ key });
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message ? error.message : 'error while getting cache',
     });
   }
 });
