@@ -24,15 +24,20 @@ const deleteKeys = ({ key }) => {
 
 /**
  * This function will get the total count of cache entries in the database and if the count is
- * greater than maximum count defined in the config it will remove the oldest cache entry
+ * greater than maximum count defined in the config it will remove the oldest cache entries
  */
 const removeOlderEntries = async () => {
   const count = await Cache.find().count();
-  if (count === config.MAX_CACHE_ENTRIES) {
-    console.log('Max cache entries reached');
-    const oldestCache = await Cache.find().sort({ createdDate: 1 }).limit(1);
-    const result = await deleteKeys({ key: oldestCache[0].key });
-    console.log(`Successully deleted oldest cache entry ${JSON.stringify(result)}`);
+  if (count >= config.MAX_CACHE_ENTRIES) {
+    const countToDelete = count - config.MAX_CACHE_ENTRIES + 1;
+    console.log(`Max cache entries reached, Deleting ${countToDelete} entries`);
+    if (countToDelete <= 0) {
+      return;
+    }
+    const oldestCache = await Cache.find().sort({ createdDate: 1 }).limit(countToDelete);
+    const keys = oldestCache.map(({ key }) => key);
+    const result = await Cache.deleteMany({ key: keys });
+    console.log(`Successully deleted oldest cache entries ${JSON.stringify(result)}`);
   }
 };
 
@@ -61,7 +66,7 @@ const updateCache = async ({ key, changes }) => {
 
 const addCache = async ({ key, value }) => {
   const now = new Date();
-  removeOlderEntries();
+  await removeOlderEntries();
   const cache = new Cache({
     _id: new mongoose.Types.ObjectId(),
     key,
