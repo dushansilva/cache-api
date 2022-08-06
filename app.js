@@ -22,7 +22,7 @@ mongoose.connect(mongoUrl)
 mongoose.Promise = global.Promise;
 
 // routes
-const userRoutes = require('./api/routes/cache');
+const cacheRoutes = require('./api/routes/cache');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 });
 
 // middleware
-app.use('/user', userRoutes);
+app.use('/api/cache', cacheRoutes);
 
 // error handling
 app.use((req, res, next) => {
