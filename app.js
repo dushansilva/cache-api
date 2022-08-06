@@ -6,13 +6,8 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const config = require('./config');
 
-const isDevMode = process.env.NODE_ENV === 'development' || false;
-// const isProdMode = process.env.NODE_ENV === 'production' || false;
+const mongoUrl = config.MONGO_LOCAL_URL;
 
-let mongoUrl = config.MONGO_DOCKER_URL;
-if (isDevMode) {
-  mongoUrl = config.MONGO_LOCAL_URL;
-}
 mongoose.connect(mongoUrl)
   .then(() => {
     console.log('Connected to Database');
