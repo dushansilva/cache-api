@@ -16,8 +16,9 @@ router.post('/', async (req, res) => {
     }
     const existingCache = await findCacheByKey({ key });
     const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] });
-    if (existingCache && existingCache.length >= 1) {
-      const result = await updateCache({ key, value: randomName });
+    if (existingCache) {
+      const result = await updateCache({ key, changes: { value: randomName } });
+      console.log(result);
       return res.status(200).json({
         message: 'Cache updated successfully',
         data: result,

@@ -6,6 +6,7 @@ const cacheSchema = mongoose.Schema({
   value: { type: String, required: true },
   createdDate: { type: Date, default: new Date() },
   updatedDate: { type: Date, default: new Date() },
+  lastHit: { type: Date, default: new Date() },
   ttl: { type: Number, default: 60 },
 });
 
