@@ -2,6 +2,7 @@ const express = require('express');
 const {
   cacheHits, getAllKeys, deleteKeys, createCache,
 } = require('../controller/cache-controller');
+const { convert } = require('../untility');
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.post('/', async (req, res) => {
     }
     const result = await createCache({ key });
     return res.status(200).json({
-      data: result,
+      data: convert({ cache: result }),
     });
   } catch (error) {
     console.log(error);
@@ -31,7 +32,7 @@ router.get('/', async (req, res) => {
     }
     const result = await cacheHits({ key });
     res.status(200).json({
-      data: result,
+      data: { value: result },
     });
   } catch (error) {
     console.log(error);
@@ -45,7 +46,7 @@ router.get('/keys', async (req, res) => {
   try {
     const result = await getAllKeys();
     res.status(200).json({
-      data: result,
+      data: { keys: result },
     });
   } catch (error) {
     console.log(error);
