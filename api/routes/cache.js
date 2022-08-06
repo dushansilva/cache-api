@@ -3,7 +3,7 @@ const {
   uniqueNamesGenerator, adjectives, colors, animals,
 } = require('unique-names-generator');
 const {
-  addCache, findCacheByKey, updateCache, cacheHits,
+  addCache, findCacheByKey, updateCache, cacheHits, getAllKeys,
 } = require('../controller/cache-controller');
 
 const router = express.Router();
@@ -54,4 +54,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/keys', async (req, res) => {
+  try {
+    const result = await getAllKeys();
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message ? error.message : 'error while getting all cache key',
+    });
+  }
+});
 module.exports = router;

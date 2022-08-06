@@ -33,9 +33,17 @@ const cacheHits = async ({ key }) => {
   return result.value;
 };
 
+const getAllKeys = async () => {
+  const result = await Cache.find().exec();
+  if (!result) {
+    return [];
+  }
+  return result.map(({ key }) => key);
+};
 module.exports = {
   findCacheByKey,
   addCache,
   updateCache,
   cacheHits,
+  getAllKeys,
 };
